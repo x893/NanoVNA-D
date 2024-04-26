@@ -1,4 +1,17 @@
 {
-    "C_Cpp.errorSquiggles": "Disabled",
-    "cpplint.filters": ["-build/include_subdir", "-build/include_order", "-readability/casting", "-whitespace/comments"]
+    "C_Cpp.errorSquiggles": "disabled",
+	"cpplint.filters": [
+		"-build/include_subdir",
+		"-build/include_order",
+		"-readability/casting",
+		"-whitespace/comments"
+	],
+	"files.associations": {
+		"halconf.h": "c",
+		"mcuconf.h": "c",
+		"nanovna.h": "c",
+		"ch.h": "c",
+		"hal.h": "c",
+		"chprintf.h": "c"
+	}
 }

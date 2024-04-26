@@ -109,21 +109,23 @@
 #if HAL_USE_GPT == FALSE
 // Run TIM2 as us timer counter (used as STM32_ST_TIM timer in ChibiOS)
 // Run TIM3 as ms timer counter
-void initTimers(void) {
-//  rccEnableTIM2(FALSE);
-  rccEnableTIM3(FALSE);
-  // TIM2 use AHB1 bus clock (32 bit timer), use STM32_TIMCLK1 clock source
-//  TIM2->PSC = STM32_TIMCLK1 / (1000000U) - 1; // 1MHz tick
-  // TIM3 use AHB1 bus clock (16 bit timer), used in touch period handler
-  TIM3->PSC = STM32_TIMCLK1 / (1000U) - 1;    // 1kHz tick
-  TIM3->CR2 = 0x20;                          // Generate TRIGO event for ADC watchdog
+void initTimers(void)
+{
+	//  rccEnableTIM2(FALSE);
+	rccEnableTIM3(FALSE);
+	// TIM2 use AHB1 bus clock (32 bit timer), use STM32_TIMCLK1 clock source
+	//  TIM2->PSC = STM32_TIMCLK1 / (1000000U) - 1; // 1MHz tick
+	// TIM3 use AHB1 bus clock (16 bit timer), used in touch period handler
+	TIM3->PSC = STM32_TIMCLK1 / (1000U) - 1; // 1kHz tick
+	TIM3->CR2 = 0x20;						 // Generate TRIGO event for ADC watchdog
 }
 
 //
-void startTimer(TIM_TypeDef *timer, uint32_t period) {
-  timer->ARR = period - 1;
-  timer->EGR = STM32_TIM_EGR_UG;
-  timer->CNT = 0;
-  timer->CR1 = STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
+void startTimer(TIM_TypeDef *timer, uint32_t period)
+{
+	timer->ARR = period - 1;
+	timer->EGR = STM32_TIM_EGR_UG;
+	timer->CNT = 0;
+	timer->CR1 = STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
 }
 #endif

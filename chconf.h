@@ -1,17 +1,17 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+	ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
 
-        http://www.apache.org/licenses/LICENSE-2.0
+		http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
 */
 
 /**
@@ -41,14 +41,14 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define CH_CFG_ST_RESOLUTION                32
+#define CH_CFG_ST_RESOLUTION 32
 
 /**
  * @brief   System tick frequency.
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 100000
+#define CH_CFG_ST_FREQUENCY 100000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -58,7 +58,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 2
+#define CH_CFG_ST_TIMEDELTA 2
 
 /** @} */
 
@@ -81,7 +81,7 @@
  * @note    The round robin preemption is not supported in tickless mode and
  *          must be set to zero in that case.
  */
-#define CH_CFG_TIME_QUANTUM                 0
+#define CH_CFG_TIME_QUANTUM 0
 
 /**
  * @brief   Managed RAM size.
@@ -94,7 +94,7 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#define CH_CFG_MEMCORE_SIZE                 0
+#define CH_CFG_MEMCORE_SIZE 0
 
 /**
  * @brief   Idle thread automatic spawn suppression.
@@ -102,7 +102,7 @@
  *          does not spawn the idle thread. The application @p main()
  *          function becomes the idle thread and must implement an
  *          infinite loop. */
-#define CH_CFG_NO_IDLE_THREAD               FALSE
+#define CH_CFG_NO_IDLE_THREAD FALSE
 
 /** @} */
 
@@ -121,7 +121,7 @@
  * @note    This is not related to the compiler optimization options.
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_OPTIMIZE_SPEED               TRUE
+#define CH_CFG_OPTIMIZE_SPEED TRUE
 
 /** @} */
 
@@ -139,7 +139,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_TM                       FALSE
+#define CH_CFG_USE_TM FALSE
 
 /**
  * @brief   Threads registry APIs.
@@ -147,7 +147,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_REGISTRY                 FALSE
+#define CH_CFG_USE_REGISTRY FALSE
 
 /**
  * @brief   Threads synchronization APIs.
@@ -156,7 +156,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_WAITEXIT                 FALSE
+#define CH_CFG_USE_WAITEXIT FALSE
 
 /**
  * @brief   Semaphores APIs.
@@ -164,7 +164,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_SEMAPHORES               FALSE
+#define CH_CFG_USE_SEMAPHORES FALSE
 
 /**
  * @brief   Semaphores queuing mode.
@@ -175,7 +175,7 @@
  *          requirements.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
+#define CH_CFG_USE_SEMAPHORES_PRIORITY FALSE
 
 /**
  * @brief   Mutexes APIs.
@@ -183,7 +183,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MUTEXES                  FALSE
+#define CH_CFG_USE_MUTEXES FALSE
 
 /**
  * @brief   Enables recursive behavior on mutexes.
@@ -193,7 +193,7 @@
  * @note    The default is @p FALSE.
  * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#define CH_CFG_USE_MUTEXES_RECURSIVE        FALSE
+#define CH_CFG_USE_MUTEXES_RECURSIVE FALSE
 
 /**
  * @brief   Conditional Variables APIs.
@@ -203,7 +203,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#define CH_CFG_USE_CONDVARS                 FALSE
+#define CH_CFG_USE_CONDVARS FALSE
 
 /**
  * @brief   Conditional Variables APIs with timeout.
@@ -213,7 +213,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_CONDVARS.
  */
-#define CH_CFG_USE_CONDVARS_TIMEOUT         FALSE
+#define CH_CFG_USE_CONDVARS_TIMEOUT FALSE
 
 /**
  * @brief   Events Flags APIs.
@@ -221,7 +221,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_EVENTS                   FALSE
+#define CH_CFG_USE_EVENTS FALSE
 
 /**
  * @brief   Events Flags APIs with timeout.
@@ -231,7 +231,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_EVENTS.
  */
-#define CH_CFG_USE_EVENTS_TIMEOUT           FALSE
+#define CH_CFG_USE_EVENTS_TIMEOUT FALSE
 
 /**
  * @brief   Synchronous Messages APIs.
@@ -240,7 +240,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MESSAGES                 FALSE
+#define CH_CFG_USE_MESSAGES FALSE
 
 /**
  * @brief   Synchronous Messages queuing mode.
@@ -251,7 +251,7 @@
  *          requirements.
  * @note    Requires @p CH_CFG_USE_MESSAGES.
  */
-#define CH_CFG_USE_MESSAGES_PRIORITY        FALSE
+#define CH_CFG_USE_MESSAGES_PRIORITY FALSE
 
 /**
  * @brief   Mailboxes APIs.
@@ -261,7 +261,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#define CH_CFG_USE_MAILBOXES                FALSE
+#define CH_CFG_USE_MAILBOXES FALSE
 
 /**
  * @brief   I/O Queues APIs.
@@ -269,7 +269,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_QUEUES                   FALSE
+#define CH_CFG_USE_QUEUES FALSE
 
 /**
  * @brief   Core Memory Manager APIs.
@@ -278,7 +278,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MEMCORE                  FALSE
+#define CH_CFG_USE_MEMCORE FALSE
 
 /**
  * @brief   Heap Allocator APIs.
@@ -290,7 +290,7 @@
  *          @p CH_CFG_USE_SEMAPHORES.
  * @note    Mutexes are recommended.
  */
-#define CH_CFG_USE_HEAP                     FALSE
+#define CH_CFG_USE_HEAP FALSE
 
 /**
  * @brief   Memory Pools Allocator APIs.
@@ -299,7 +299,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MEMPOOLS                 FALSE
+#define CH_CFG_USE_MEMPOOLS FALSE
 
 /**
  * @brief   Dynamic Threads APIs.
@@ -310,7 +310,7 @@
  * @note    Requires @p CH_CFG_USE_WAITEXIT.
  * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#define CH_CFG_USE_DYNAMIC                  FALSE
+#define CH_CFG_USE_DYNAMIC FALSE
 
 /** @} */
 
@@ -326,7 +326,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_STATISTICS                   FALSE
+#define CH_DBG_STATISTICS FALSE
 
 /**
  * @brief   Debug option, system state check.
@@ -335,7 +335,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#define CH_DBG_SYSTEM_STATE_CHECK FALSE
 
 /**
  * @brief   Debug option, parameters checks.
@@ -344,7 +344,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_CHECKS                FALSE
+#define CH_DBG_ENABLE_CHECKS FALSE
 
 /**
  * @brief   Debug option, consistency checks.
@@ -354,7 +354,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS FALSE
 
 /**
  * @brief   Debug option, trace buffer.
@@ -362,14 +362,14 @@
  *
  * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
  */
-#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
+#define CH_DBG_TRACE_MASK CH_DBG_TRACE_MASK_DISABLED
 
 /**
  * @brief   Trace buffer entries.
  * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
  */
-#define CH_DBG_TRACE_BUFFER_SIZE            128
+#define CH_DBG_TRACE_BUFFER_SIZE 128
 
 /**
  * @brief   Debug option, stack checks.
@@ -381,7 +381,7 @@
  * @note    The default failure mode is to halt the system with the global
  *          @p panic_msg variable set to @p NULL.
  */
-#define CH_DBG_ENABLE_STACK_CHECK           TRUE
+#define CH_DBG_ENABLE_STACK_CHECK TRUE
 
 /**
  * @brief   Debug option, stacks initialization.
@@ -391,7 +391,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_FILL_THREADS                 TRUE
+#define CH_DBG_FILL_THREADS TRUE
 
 /**
  * @brief   Debug option, threads profiling.
@@ -402,7 +402,7 @@
  * @note    This debug option is not currently compatible with the
  *          tickless mode.
  */
-#define CH_DBG_THREADS_PROFILING            FALSE
+#define CH_DBG_THREADS_PROFILING FALSE
 
 /** @} */
 
@@ -417,8 +417,8 @@
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
-#define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/
+#define CH_CFG_THREAD_EXTRA_FIELDS \
+	/* Add threads custom fields here.*/
 
 /**
  * @brief   Threads initialization hook.
@@ -427,9 +427,10 @@
  * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
-#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
-  /* Add threads initialization code here.*/                                \
-}
+#define CH_CFG_THREAD_INIT_HOOK(tp)                \
+	{                                              \
+		/* Add threads initialization code here.*/ \
+	}
 
 /**
  * @brief   Threads finalization hook.
@@ -439,31 +440,35 @@
  * @note    It is also invoked when the threads simply return in order to
  *          terminate.
  */
-#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
-  /* Add threads finalization code here.*/                                  \
-}
+#define CH_CFG_THREAD_EXIT_HOOK(tp)              \
+	{                                            \
+		/* Add threads finalization code here.*/ \
+	}
 
 /**
  * @brief   Context switch hook.
  * @details This hook is invoked just before switching between threads.
  */
-#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-  /* System halt code here.*/                                               \
-}
+#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) \
+	{                                        \
+		/* System halt code here.*/          \
+	}
 
 /**
  * @brief   ISR enter hook.
  */
-#define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
-  /* IRQ prologue code here.*/                                              \
-}
+#define CH_CFG_IRQ_PROLOGUE_HOOK()   \
+	{                                \
+		/* IRQ prologue code here.*/ \
+	}
 
 /**
  * @brief   ISR exit hook.
  */
-#define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
-  /* IRQ epilogue code here.*/                                              \
-}
+#define CH_CFG_IRQ_EPILOGUE_HOOK()   \
+	{                                \
+		/* IRQ epilogue code here.*/ \
+	}
 
 /**
  * @brief   Idle thread enter hook.
@@ -471,8 +476,9 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define CH_CFG_IDLE_ENTER_HOOK() {                                         \
-}
+#define CH_CFG_IDLE_ENTER_HOOK() \
+	{                            \
+	}
 
 /**
  * @brief   Idle thread leave hook.
@@ -480,43 +486,48 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define CH_CFG_IDLE_LEAVE_HOOK() {                                         \
-}
+#define CH_CFG_IDLE_LEAVE_HOOK() \
+	{                            \
+	}
 
 /**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
-#define CH_CFG_IDLE_LOOP_HOOK() {                                           \
-  /* Idle loop code here.*/                                                 \
-}
+#define CH_CFG_IDLE_LOOP_HOOK()   \
+	{                             \
+		/* Idle loop code here.*/ \
+	}
 
 /**
  * @brief   System tick event hook.
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
-  /* System tick event code here.*/                                         \
-}
+#define CH_CFG_SYSTEM_TICK_HOOK()         \
+	{                                     \
+		/* System tick event code here.*/ \
+	}
 
 /**
  * @brief   System halt hook.
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
-  /* System halt code here.*/                                               \
-}
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) \
+	{                                   \
+		/* System halt code here.*/     \
+	}
 
 /**
  * @brief   Trace hook.
  * @details This hook is invoked each time a new record is written in the
  *          trace buffer.
  */
-#define CH_CFG_TRACE_HOOK(tep) {                                            \
-  /* Trace code here.*/                                                     \
-}
+#define CH_CFG_TRACE_HOOK(tep) \
+	{                          \
+		/* Trace code here.*/  \
+	}
 
 /** @} */
 
@@ -524,7 +535,7 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
-#define CHPRINTF_USE_FLOAT          TRUE
+#define CHPRINTF_USE_FLOAT TRUE
 
 /**
  * ChibiOS/os/various/shell/shell_cmd.c
@@ -537,8 +548,6 @@
 #define SHELL_CMD_THREADS_ENABLED FALSE
 #define SHELL_CMD_TEST_ENABLED FALSE
 
-
-
-#endif  /* _CHCONF_H_ */
+#endif /* _CHCONF_H_ */
 
 /** @} */

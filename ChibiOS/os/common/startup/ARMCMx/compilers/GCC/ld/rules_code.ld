@@ -18,12 +18,12 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-    vectors : ALIGN(16) SUBALIGN(16)
+    vectors (READONLY): ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(.vectors))
     } > VECTORS_FLASH AT > VECTORS_FLASH_LMA
 
-    xtors : ALIGN(4) SUBALIGN(4)
+    xtors (READONLY): ALIGN(4) SUBALIGN(4)
     {
         __init_array_start = .;
         KEEP(*(SORT(.init_array.*)))
@@ -35,7 +35,7 @@ SECTIONS
         __fini_array_end = .;
     } > XTORS_FLASH AT > XTORS_FLASH_LMA
 
-    .text : ALIGN(4) SUBALIGN(4)
+    .text (READONLY): ALIGN(4) SUBALIGN(4)
     {
         *(.text)
         *(.text.*)
@@ -44,7 +44,7 @@ SECTIONS
         *(.gcc*)
     } > TEXT_FLASH AT > TEXT_FLASH_LMA
 
-    .rodata : ALIGN(4)
+    .rodata (READONLY): ALIGN(4)
     {
         . = ALIGN(4);
         __rodata_base__ = .;
@@ -54,23 +54,23 @@ SECTIONS
         __rodata_end__ = .;
     } > RODATA_FLASH AT > RODATA_FLASH_LMA
 
-    .ARM.extab :
+    .ARM.extab (READONLY):
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
     } > VARIOUS_FLASH AT > VARIOUS_FLASH_LMA
 
-    .ARM.exidx : {
+    .ARM.exidx (READONLY): {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
      } > VARIOUS_FLASH AT > VARIOUS_FLASH_LMA
 
-    .eh_frame_hdr :
+    .eh_frame_hdr (READONLY):
     {
         *(.eh_frame_hdr)
     } > VARIOUS_FLASH AT > VARIOUS_FLASH_LMA
 
-    .eh_frame : ONLY_IF_RO
+    .eh_frame (READONLY): ONLY_IF_RO
     {
         *(.eh_frame)
     } > VARIOUS_FLASH AT > VARIOUS_FLASH_LMA

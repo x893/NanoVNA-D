@@ -185,7 +185,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -194,7 +194,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -203,7 +203,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -212,7 +212,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -221,7 +221,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -230,7 +230,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $(<F)
+	@echo Compiling $<
 	@$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
