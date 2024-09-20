@@ -1,7 +1,7 @@
 *~
 .DS_Store
 .dep
-build
+build*
 test
 python
 *.py
@@ -9,4 +9,5 @@ python
 TAGS
 .emacs-dirvars
 *png
-.vs
+*.emSession
+DebugConfig/

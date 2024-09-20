@@ -1,0 +1,141 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="nanovna-d" version="2" target="8">
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="None" />
+  <project Name="nanovna-d">
+    <configuration
+      LIBRARY_IO_TYPE="RTT"
+      Name="Common"
+      Target="STM32F303CCTx"
+      arm_architecture="v7EM"
+      arm_compiler_variant="gcc"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="Hard"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_linker_heap_size="1024"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="2048"
+      arm_linker_variant="SEGGER"
+      arm_simulator_memory_simulation_parameter="ROM;0x08000000;0x00040000;RAM;0x10000000;0x00002000;RAM;0x20000000;0x0000A000"
+      arm_target_device_name="STM32F303CC"
+      arm_target_interface_type="SWD"
+      c_preprocessor_definitions="ARM_MATH_CM4;STM32F303xC;__STM32F303_SUBFAMILY;__STM32F3XX_FAMILY"
+      c_user_include_directories="$(ProjectDir)/STM32F3xx/Device/Include"
+      debug_register_definition_file="$(ProjectDir)/STM32F30x_Registers.xml"
+      debug_stack_pointer_start="__stack_end__"
+      debug_start_from_entry_point_symbol="Yes"
+      debug_target_connection="J-Link"
+      gcc_entry_point="Reset_Handler"
+      linker_memory_map_file="$(ProjectDir)/STM32F303CCTx_MemoryMap.xml"
+      project_directory=""
+      project_type="Executable"
+      target_reset_script="Reset();" />
+    <configuration
+      LIBRARY_IO_TYPE="None"
+      LIBRARY_LOCALES="Minimal"
+      Name="Debug"
+      arm_linker_search_path="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld"
+      arm_linker_variant="GNU"
+      build_intermediate_directory="build/Obj"
+      build_output_directory="build/Exe"
+      build_quietly="Yes"
+      c_preprocessor_definitions="THUMB;CORTEX_USE_FPU=TRUE;ARM_MATH_CM4;VERSION=\\&quot;v1.2.40\\&quot;;NANOVNA_F303;VNA_AUTO_SELECT_RTC_SOURCE;THUMB_PRESENT;THUMB_NO_INTERWORKING"
+      c_user_include_directories=".;ChibiOS/os/license;ChibiOS/os/common/startup/ARMCMx/compilers/GCC;ChibiOS/os/common/startup/ARMCMx/devices/STM32F3xx;ChibiOS/os/common/ext/CMSIS/include;ChibiOS/os/common/ext/CMSIS/ST/STM32F3xx;ChibiOS/os/rt/include;ChibiOS/os/common/oslib/include;ChibiOS/os/common/ports/ARMCMx;ChibiOS/os/common/ports/ARMCMx/compilers/GCC;ChibiOS/os/hal/osal/rt;ChibiOS/os/hal/include;ChibiOS/os/hal/ports/common/ARMCMx;ChibiOS/os/hal/ports/STM32/STM32F3xx;ChibiOS/os/hal/ports/STM32/LLD/ADCv3;ChibiOS/os/hal/ports/STM32/LLD/CANv1;ChibiOS/os/hal/ports/STM32/LLD/DACv1;ChibiOS/os/hal/ports/STM32/LLD/DMAv1;ChibiOS/os/hal/ports/STM32/LLD/EXTIv1;ChibiOS/os/hal/ports/STM32/LLD/GPIOv2;ChibiOS/os/hal/ports/STM32/LLD/I2Cv2;ChibiOS/os/hal/ports/STM32/LLD/RTCv2;ChibiOS/os/hal/ports/STM32/LLD/SPIv2;ChibiOS/os/hal/ports/STM32/LLD/TIMv1;ChibiOS/os/hal/ports/STM32/LLD/USARTv2;ChibiOS/os/hal/ports/STM32/LLD/USBv1;ChibiOS/os/hal/ports/STM32/LLD/xWDGv1;NANOVNA_STM32_F303;ChibiOS/os/hal/lib/streams"
+      debug_enable_RTT="No"
+      debug_stack_pointer_start="__main_stack_end__"
+      link_linker_script_file="NANOVNA_STM32_F303/STM32F303xC.ld"
+      link_symbol_definitions="__process_stack_size__=0x200;__main_stack_size__=0x200"
+      link_use_linker_script_file="Yes" />
+    <folder Name="ChibiOS/os/common/ports/ARMCMx">
+      <file file_name="ChibiOS/os/common/ports/ARMCMx/chcore.c" />
+      <file file_name="ChibiOS/os/common/ports/ARMCMx/chcore_v7m.c" />
+    </folder>
+    <folder Name="Chibios/os/common/startup/ARMCMx/compilers/GCC">
+      <file file_name="ChibiOS/os/common/ports/ARMCMx/compilers/GCC/chcoreasm_v7m.s" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/crt0_v7m.s" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/crt1.c" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld/rules.ld" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld/rules_code.ld" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld/rules_data.ld" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld/rules_stacks.ld" />
+      <file file_name="ChibiOS/os/common/startup/ARMCMx/compilers/GCC/vectors.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal">
+      <file file_name="ChibiOS/os/hal/src/hal.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_buffers.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_mmcsd.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_queues.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_serial.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_serial_usb.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_st.c" />
+      <file file_name="ChibiOS/os/hal/src/hal_usb.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal/lib/streams">
+      <file file_name="ChibiOS/os/hal/lib/streams/memstreams.c" />
+      <file file_name="ChibiOS/os/hal/lib/streams/nullstreams.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal/osal/rt">
+      <file file_name="ChibiOS/os/hal/osal/rt/osal.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal/ports/common/ARMCMx">
+      <file file_name="ChibiOS/os/hal/ports/common/ARMCMx/nvic.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal/ports/STM32/LLD">
+      <file file_name="ChibiOS/os/hal/ports/STM32/LLD/USARTv2/hal_serial_lld.c" />
+      <file file_name="ChibiOS/os/hal/ports/STM32/LLD/TIMv1/hal_st_lld.c" />
+      <file file_name="ChibiOS/os/hal/ports/STM32/LLD/USBv1/hal_usb_lld.c" />
+      <file file_name="ChibiOS/os/hal/ports/STM32/LLD/DMAv1/stm32_dma.c" />
+    </folder>
+    <folder Name="ChibiOS/os/hal/ports/STM32/STM32F3xx">
+      <file file_name="ChibiOS/os/hal/ports/STM32/STM32F3xx/hal_lld.c" />
+    </folder>
+    <folder Name="ChibiOS/os/rt">
+      <file file_name="ChibiOS/os/rt/src/chdebug.c" />
+      <file file_name="ChibiOS/os/rt/src/chschd.c" />
+      <file file_name="ChibiOS/os/rt/src/chsys.c" />
+      <file file_name="ChibiOS/os/rt/src/chthreads.c" />
+      <file file_name="ChibiOS/os/rt/src/chtrace.c" />
+      <file file_name="ChibiOS/os/rt/src/chvt.c" />
+    </folder>
+    <folder Name="FatFs">
+      <file file_name="FatFs/ff.c" />
+      <file file_name="FatFs/ffunicode.c" />
+    </folder>
+    <folder Name="fonts">
+      <file file_name="fonts/Font11x14.c" />
+      <file file_name="fonts/Font5x7.c" />
+      <file file_name="fonts/Font6x10.c" />
+      <file file_name="fonts/Font7x11b.c" />
+      <file file_name="fonts/numfont16x22.c" />
+    </folder>
+    <folder Name="NANOVNA_STM32_F303">
+      <file file_name="NANOVNA_STM32_F303/board.c" />
+      <file file_name="NANOVNA_STM32_F303/STM32F303xC.ld" />
+    </folder>
+    <folder Name="vna_modules">
+      <file file_name="vna_modules/vna_browser.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+    </folder>
+    <file file_name="chprintf.c" />
+    <file file_name="common.c" />
+    <file file_name="data_storage.c" />
+    <file file_name="dsp.c" />
+    <file file_name="hardware.c" />
+    <file file_name="lcd.c" />
+    <file file_name="main.c" />
+    <file file_name="mcuconf.h" />
+    <file file_name="nanovna.h" />
+    <file file_name="plot.c" />
+    <file file_name="si5351.c" />
+    <file file_name="tlv320aic3204.c" />
+    <file file_name="ui.c" />
+    <file file_name="usbcfg.c" />
+    <file file_name="vna_math.c" />
+  </project>
+</solution>

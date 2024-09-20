@@ -20,6 +20,12 @@
 MEMORY
 {
     flash0  : org = 0x08000000, len = 142k
+    flash1  : org = 0x00000000, len = 0
+    flash2  : org = 0x00000000, len = 0
+    flash3  : org = 0x00000000, len = 0
+    flash4  : org = 0x00000000, len = 0
+    flash5  : org = 0x00000000, len = 0
+    flash6  : org = 0x00000000, len = 0
     flash7  : org = 0x0801C800, len = 114k
     ram0    : org = 0x20000000, len = 40k
     ram1    : org = 0x00000000, len = 0
@@ -62,14 +68,14 @@ REGION_ALIAS("CALDATA_FLASH", flash7);
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts.*/
-REGION_ALIAS("MAIN_STACK_RAM", ram0);
+REGION_ALIAS("MAIN_STACK_RAM", ram4);
 
 /* RAM region to be used for the process stack. This is the stack used by
    the main() function.*/
-REGION_ALIAS("PROCESS_STACK_RAM", ram0);
+REGION_ALIAS("PROCESS_STACK_RAM", ram4);
 
 /* RAM region to be used for data segment.*/
-REGION_ALIAS("DATA_RAM", ram0);
+REGION_ALIAS("DATA_RAM", ram4);
 REGION_ALIAS("DATA_RAM_LMA", flash0);
 
 /* RAM region to be used for BSS segment.*/

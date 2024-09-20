@@ -1,20 +1,20 @@
 /*
-	ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio.
 
-	This file is part of ChibiOS.
+    This file is part of ChibiOS.
 
-	ChibiOS is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 3 of the License, or
-	(at your option) any later version.
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
 
-	ChibiOS is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
@@ -69,17 +69,17 @@ THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
  *
  * @param[in] p         the thread parameter, unused in this scenario
  */
-static void _idle_thread(void *p)
-{
-	(void)p;
-	while (true)
-	{
-		/*lint -save -e522 [2.2] Apparently no side effects because it contains
-		  an asm instruction.*/
-		port_wait_for_interrupt();
-		/*lint -restore*/
-		CH_CFG_IDLE_LOOP_HOOK();
-	}
+static void _idle_thread(void *p) {
+
+  (void)p;
+
+  while (true) {
+    /*lint -save -e522 [2.2] Apparently no side effects because it contains
+      an asm instruction.*/
+    port_wait_for_interrupt();
+    /*lint -restore*/
+    CH_CFG_IDLE_LOOP_HOOK();
+  }
 }
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 
@@ -97,83 +97,83 @@ static void _idle_thread(void *p)
  *
  * @special
  */
-void chSysInit(void)
-{
+void chSysInit(void) {
 
-	_scheduler_init();
-	_vt_init();
-	_trace_init();
+  _scheduler_init();
+  _vt_init();
+  _trace_init();
 
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-	ch.dbg.isr_cnt = (cnt_t)0;
-	ch.dbg.lock_cnt = (cnt_t)0;
+  ch.dbg.isr_cnt  = (cnt_t)0;
+  ch.dbg.lock_cnt = (cnt_t)0;
 #endif
 #if CH_CFG_USE_TM == TRUE
-	_tm_init();
+  _tm_init();
 #endif
 #if CH_CFG_USE_MEMCORE == TRUE
-	_core_init();
+  _core_init();
 #endif
 #if CH_CFG_USE_HEAP == TRUE
-	_heap_init();
+  _heap_init();
 #endif
 #if CH_DBG_STATISTICS == TRUE
-	_stats_init();
+  _stats_init();
 #endif
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
-	/* Now this instructions flow becomes the main thread.*/
+  /* Now this instructions flow becomes the main thread.*/
 #if CH_CFG_USE_REGISTRY == TRUE
-	currp = _thread_init(&ch.mainthread, (const char *)&ch_debug, NORMALPRIO);
+  currp = _thread_init(&ch.mainthread, (const char *)&ch_debug, NORMALPRIO);
 #else
-	currp = _thread_init(&ch.mainthread, "main", NORMALPRIO);
+  currp = _thread_init(&ch.mainthread, "main", NORMALPRIO);
 #endif
 #else
-	/* Now this instructions flow becomes the idle thread.*/
-	currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
+  /* Now this instructions flow becomes the idle thread.*/
+  currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
 #endif
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
-	{
-		/* Setting up the base address of the static main thread stack, the
-		   symbol must be provided externally.*/
-		extern stkalign_t __main_thread_stack_base__;
-		currp->wabase = &__main_thread_stack_base__;
-	}
+  {
+    /* Setting up the base address of the static main thread stack, the
+       symbol must be provided externally.*/
+    extern stkalign_t __main_thread_stack_base__;
+    currp->wabase = &__main_thread_stack_base__;
+  }
 #elif CH_CFG_USE_DYNAMIC == TRUE
-	currp->wabase = NULL;
+  currp->wabase = NULL;
 #endif
 
-	/* Setting up the caller as current thread.*/
-	currp->state = CH_STATE_CURRENT;
+  /* Setting up the caller as current thread.*/
+  currp->state = CH_STATE_CURRENT;
 
-	/* Port layer initialization last because it depend on some of the
-	   initializations performed before.*/
-	port_init();
+  /* Port layer initialization last because it depend on some of the
+     initializations performed before.*/
+  port_init();
 
 #if CH_DBG_STATISTICS == TRUE
-	/* Starting measurement for this thread.*/
-	chTMStartMeasurementX(&currp->stats);
+  /* Starting measurement for this thread.*/
+  chTMStartMeasurementX(&currp->stats);
 #endif
 
-	/* It is alive now.*/
-	chSysEnable();
+  /* It is alive now.*/
+  chSysEnable();
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
-	{
-		static const thread_descriptor_t idle_descriptor = {
-			"idle",
-			THD_WORKING_AREA_BASE(ch_idle_thread_wa),
-			THD_WORKING_AREA_END(ch_idle_thread_wa),
-			IDLEPRIO,
-			_idle_thread,
-			NULL};
+  {
+    static const thread_descriptor_t idle_descriptor = {
+      "idle",
+      THD_WORKING_AREA_BASE(ch_idle_thread_wa),
+      THD_WORKING_AREA_END(ch_idle_thread_wa),
+      IDLEPRIO,
+      _idle_thread,
+      NULL
+    };
 
-		/* This thread has the lowest priority in the system, its role is just to
-		   serve interrupts in its context while keeping the lowest energy saving
-		   mode compatible with the system status.*/
-		(void)chThdCreate(&idle_descriptor);
-	}
+    /* This thread has the lowest priority in the system, its role is just to
+       serve interrupts in its context while keeping the lowest energy saving
+       mode compatible with the system status.*/
+    (void) chThdCreate(&idle_descriptor);
+  }
 #endif
 }
 
@@ -189,24 +189,22 @@ void chSysInit(void)
  *
  * @special
  */
-void chSysHalt(const char *reason)
-{
+void chSysHalt(const char *reason) {
 
-	port_disable();
+  port_disable();
 
-	/* Halt hook code, usually empty.*/
-	CH_CFG_SYSTEM_HALT_HOOK(reason);
+  /* Halt hook code, usually empty.*/
+  CH_CFG_SYSTEM_HALT_HOOK(reason);
 
-	/* Logging the event.*/
-	_trace_halt(reason);
+  /* Logging the event.*/
+  _trace_halt(reason);
 
-	/* Pointing to the passed message.*/
-	ch.dbg.panic_msg = reason;
+  /* Pointing to the passed message.*/
+  ch.dbg.panic_msg = reason;
 
-	/* Harmless infinite loop.*/
-	while (true)
-	{
-	}
+  /* Harmless infinite loop.*/
+  while (true) {
+  }
 }
 
 /**
@@ -233,108 +231,94 @@ void chSysHalt(const char *reason)
  *
  * @iclass
  */
-bool chSysIntegrityCheckI(unsigned testmask)
-{
-	cnt_t n;
+bool chSysIntegrityCheckI(unsigned testmask) {
+  cnt_t n;
 
-	chDbgCheckClassI();
+  chDbgCheckClassI();
 
-	/* Ready List integrity check.*/
-	if ((testmask & CH_INTEGRITY_RLIST) != 0U)
-	{
-		thread_t *tp;
+  /* Ready List integrity check.*/
+  if ((testmask & CH_INTEGRITY_RLIST) != 0U) {
+    thread_t *tp;
 
-		/* Scanning the ready list forward.*/
-		n = (cnt_t)0;
-		tp = ch.rlist.queue.next;
-		while (tp != (thread_t *)&ch.rlist.queue)
-		{
-			n++;
-			tp = tp->queue.next;
-		}
+    /* Scanning the ready list forward.*/
+    n = (cnt_t)0;
+    tp = ch.rlist.queue.next;
+    while (tp != (thread_t *)&ch.rlist.queue) {
+      n++;
+      tp = tp->queue.next;
+    }
 
-		/* Scanning the ready list backward.*/
-		tp = ch.rlist.queue.prev;
-		while (tp != (thread_t *)&ch.rlist.queue)
-		{
-			n--;
-			tp = tp->queue.prev;
-		}
+    /* Scanning the ready list backward.*/
+    tp = ch.rlist.queue.prev;
+    while (tp != (thread_t *)&ch.rlist.queue) {
+      n--;
+      tp = tp->queue.prev;
+    }
 
-		/* The number of elements must match.*/
-		if (n != (cnt_t)0)
-		{
-			return true;
-		}
-	}
+    /* The number of elements must match.*/
+    if (n != (cnt_t)0) {
+      return true;
+    }
+  }
 
-	/* Timers list integrity check.*/
-	if ((testmask & CH_INTEGRITY_VTLIST) != 0U)
-	{
-		virtual_timer_t *vtp;
+  /* Timers list integrity check.*/
+  if ((testmask & CH_INTEGRITY_VTLIST) != 0U) {
+    virtual_timer_t * vtp;
 
-		/* Scanning the timers list forward.*/
-		n = (cnt_t)0;
-		vtp = ch.vtlist.next;
-		while (vtp != (virtual_timer_t *)&ch.vtlist)
-		{
-			n++;
-			vtp = vtp->next;
-		}
+    /* Scanning the timers list forward.*/
+    n = (cnt_t)0;
+    vtp = ch.vtlist.next;
+    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+      n++;
+      vtp = vtp->next;
+    }
 
-		/* Scanning the timers list backward.*/
-		vtp = ch.vtlist.prev;
-		while (vtp != (virtual_timer_t *)&ch.vtlist)
-		{
-			n--;
-			vtp = vtp->prev;
-		}
+    /* Scanning the timers list backward.*/
+    vtp = ch.vtlist.prev;
+    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+      n--;
+      vtp = vtp->prev;
+    }
 
-		/* The number of elements must match.*/
-		if (n != (cnt_t)0)
-		{
-			return true;
-		}
-	}
+    /* The number of elements must match.*/
+    if (n != (cnt_t)0) {
+      return true;
+    }
+  }
 
 #if CH_CFG_USE_REGISTRY == TRUE
-	if ((testmask & CH_INTEGRITY_REGISTRY) != 0U)
-	{
-		thread_t *tp;
+  if ((testmask & CH_INTEGRITY_REGISTRY) != 0U) {
+    thread_t *tp;
 
-		/* Scanning the ready list forward.*/
-		n = (cnt_t)0;
-		tp = ch.rlist.newer;
-		while (tp != (thread_t *)&ch.rlist)
-		{
-			n++;
-			tp = tp->newer;
-		}
+    /* Scanning the ready list forward.*/
+    n = (cnt_t)0;
+    tp = ch.rlist.newer;
+    while (tp != (thread_t *)&ch.rlist) {
+      n++;
+      tp = tp->newer;
+    }
 
-		/* Scanning the ready list backward.*/
-		tp = ch.rlist.older;
-		while (tp != (thread_t *)&ch.rlist)
-		{
-			n--;
-			tp = tp->older;
-		}
+    /* Scanning the ready list backward.*/
+    tp = ch.rlist.older;
+    while (tp != (thread_t *)&ch.rlist) {
+      n--;
+      tp = tp->older;
+    }
 
-		/* The number of elements must match.*/
-		if (n != (cnt_t)0)
-		{
-			return true;
-		}
-	}
+    /* The number of elements must match.*/
+    if (n != (cnt_t)0) {
+      return true;
+    }
+  }
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 #if defined(PORT_INTEGRITY_CHECK)
-	if ((testmask & CH_INTEGRITY_PORT) != 0U)
-	{
-		PORT_INTEGRITY_CHECK();
-	}
+  if ((testmask & CH_INTEGRITY_PORT) != 0U) {
+    PORT_INTEGRITY_CHECK();
+  }
 #endif
 
-	return false;
+  return false;
 }
 
 /**
@@ -348,24 +332,22 @@ bool chSysIntegrityCheckI(unsigned testmask)
  *
  * @iclass
  */
-void chSysTimerHandlerI(void)
-{
+void chSysTimerHandlerI(void) {
 
-	chDbgCheckClassI();
+  chDbgCheckClassI();
 
 #if CH_CFG_TIME_QUANTUM > 0
-	/* Running thread has not used up quantum yet? */
-	if (currp->preempt > (tslices_t)0)
-	{
-		/* Decrement remaining quantum.*/
-		currp->preempt--;
-	}
+  /* Running thread has not used up quantum yet? */
+  if (currp->preempt > (tslices_t)0) {
+    /* Decrement remaining quantum.*/
+    currp->preempt--;
+  }
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-	currp->time++;
+  currp->time++;
 #endif
-	chVTDoTickI();
-	CH_CFG_SYSTEM_TICK_HOOK();
+  chVTDoTickI();
+  CH_CFG_SYSTEM_TICK_HOOK();
 }
 
 /**
@@ -381,22 +363,18 @@ void chSysTimerHandlerI(void)
  *
  * @xclass
  */
-syssts_t chSysGetStatusAndLockX(void)
-{
+syssts_t chSysGetStatusAndLockX(void) {
 
-	syssts_t sts = port_get_irq_status();
-	if (port_irq_enabled(sts))
-	{
-		if (port_is_isr_context())
-		{
-			chSysLockFromISR();
-		}
-		else
-		{
-			chSysLock();
-		}
-	}
-	return sts;
+  syssts_t sts = port_get_irq_status();
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context()) {
+      chSysLockFromISR();
+    }
+    else {
+      chSysLock();
+    }
+  }
+  return sts;
 }
 
 /**
@@ -408,21 +386,17 @@ syssts_t chSysGetStatusAndLockX(void)
  *
  * @xclass
  */
-void chSysRestoreStatusX(syssts_t sts)
-{
+void chSysRestoreStatusX(syssts_t sts) {
 
-	if (port_irq_enabled(sts))
-	{
-		if (port_is_isr_context())
-		{
-			chSysUnlockFromISR();
-		}
-		else
-		{
-			chSchRescheduleS();
-			chSysUnlock();
-		}
-	}
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context()) {
+      chSysUnlockFromISR();
+    }
+    else {
+      chSchRescheduleS();
+      chSysUnlock();
+    }
+  }
 }
 
 #if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
@@ -444,10 +418,9 @@ void chSysRestoreStatusX(syssts_t sts)
  *
  * @xclass
  */
-bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end)
-{
+bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-	return (bool)((cnt - start) < (end - start));
+  return (bool)((cnt - start) < (end - start));
 }
 
 /**
@@ -461,14 +434,12 @@ bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end)
  *
  * @xclass
  */
-void chSysPolledDelayX(rtcnt_t cycles)
-{
-	rtcnt_t start = chSysGetRealtimeCounterX();
-	rtcnt_t end = start + cycles;
+void chSysPolledDelayX(rtcnt_t cycles) {
+  rtcnt_t start = chSysGetRealtimeCounterX();
+  rtcnt_t end  = start + cycles;
 
-	while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
-	{
-	}
+  while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end)) {
+  }
 }
 #endif /* PORT_SUPPORTS_RT == TRUE */
 

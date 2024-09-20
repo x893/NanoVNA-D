@@ -18,8 +18,6 @@
  * the Free Software Foundation, Inc., 51 Franklin Street,
  * Boston, MA 02110-1301, USA.
  */
-#ifndef __SI5351_H__
-#define __SI5351_H__
 
 #define SI5351_REG_3_OUTPUT_ENABLE_CONTROL  3
 #define SI5351_CLK0_EN     (1<<0)
@@ -92,4 +90,3 @@ void si5351_set_tcxo(uint32_t xtal);
 // Get info functions
 uint32_t si5351_get_frequency(void);
 uint32_t si5351_get_harmonic_lvl(uint32_t f);
-#endif

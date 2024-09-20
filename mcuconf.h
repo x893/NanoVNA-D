@@ -13,12 +13,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#ifndef __MCUCONF_H__
-#define __MCUCONF_H__
 
 #ifdef NANOVNA_F303
 #include "NANOVNA_STM32_F303/mcuconf.h"
 #else
 #include "NANOVNA_STM32_F072/mcuconf.h"
-#endif
 #endif
