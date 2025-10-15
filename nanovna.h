@@ -171,7 +171,7 @@
  * main.c
  */
 // Minimum frequency set
-#define FREQUENCY_MIN            800
+#define FREQUENCY_MIN            600
 // Maximum frequency set
 #define FREQUENCY_MAX            2700000000U
 // Frequency threshold (max frequency for si5351, harmonic mode after)
@@ -345,8 +345,8 @@ int parse_line(char *line, char* args[], int max_cnt);
 void swap_bytes(uint16_t *buf, int size);
 int packbits(char *source, char *dest, int size);
 void _delay_8t(uint32_t cycles);
-static inline void delayMicroseconds(uint32_t us) {_delay_8t(us*STM32_CORE_CLOCK/8);}
-static inline void delayMilliseconds(uint32_t ms) {_delay_8t(ms*125*STM32_CORE_CLOCK);}
+inline void delayMicroseconds(uint32_t us) {_delay_8t(us*STM32_CORE_CLOCK/8);}
+inline void delayMilliseconds(uint32_t ms) {_delay_8t(ms*125*STM32_CORE_CLOCK);}
 
 void pause_sweep(void);
 void toggle_sweep(void);
@@ -405,7 +405,7 @@ extern const char *info_about[];
 // Generator ready delays, values in us
 #define DELAY_BAND_1_2           US2ST( 100)   // 0 Delay for bands 1-2
 #define DELAY_BAND_3_4           US2ST( 140)   // 1 Delay for bands 3-4
-#define DELAY_BANDCHANGE         US2ST( 800)   // 2 Band changes need set additional delay after reset PLL
+#define DELAY_BANDCHANGE         US2ST(5000)   // 2 Band changes need set additional delay after reset PLL
 #define DELAY_CHANNEL_CHANGE     US2ST( 100)   // 3 Switch channel delay
 #define DELAY_SWEEP_START        US2ST( 100)   // 4 Delay at sweep start
 // Delay after before/after set new PLL values in ms
@@ -543,8 +543,8 @@ void tlv320aic3204_write_reg(uint8_t page, uint8_t reg, uint8_t data);
 #define CALIBRATION_INFO_POSY       100
 
 #define FREQUENCIES_XPOS1           OFFSETX
-#define FREQUENCIES_XPOS2           (LCD_WIDTH - 23 * sFONT_WIDTH)
-#define FREQUENCIES_XPOS3           (LCD_WIDTH/2 + OFFSETX - 16 * sFONT_WIDTH / 2)
+#define FREQUENCIES_XPOS2           (LCD_WIDTH - sFONT_STR_WIDTH(23))
+#define FREQUENCIES_XPOS3           (LCD_WIDTH/2 + OFFSETX - sFONT_STR_WIDTH(16) / 2)
 #define FREQUENCIES_YPOS            (AREA_HEIGHT_NORMAL)
 #endif // end 320x240 display plot definitions
 
@@ -598,8 +598,8 @@ void tlv320aic3204_write_reg(uint8_t page, uint8_t reg, uint8_t data);
 #define CALIBRATION_INFO_POSY       100
 
 #define FREQUENCIES_XPOS1           OFFSETX
-#define FREQUENCIES_XPOS2           (LCD_WIDTH - 22 * sFONT_WIDTH)
-#define FREQUENCIES_XPOS3           (LCD_WIDTH/2 + OFFSETX - 14 * sFONT_WIDTH / 2)
+#define FREQUENCIES_XPOS2           (LCD_WIDTH - sFONT_STR_WIDTH(22))
+#define FREQUENCIES_XPOS3           (LCD_WIDTH/2 + OFFSETX - sFONT_STR_WIDTH(14) / 2)
 #define FREQUENCIES_YPOS            (AREA_HEIGHT_NORMAL + 2)
 #endif // end 480x320 display plot definitions
 
@@ -618,7 +618,7 @@ void tlv320aic3204_write_reg(uint8_t page, uint8_t reg, uint8_t data);
 // Menu buttons y offset
 #define MENU_BUTTON_Y_OFFSET          1
 // Menu buttons size = 21 for icon and 10 chars
-#define MENU_BUTTON_WIDTH           (7 + 12 * FONT_WIDTH)
+#define MENU_BUTTON_WIDTH           (7 + FONT_STR_WIDTH(12))
 #define MENU_BUTTON_HEIGHT(n)       (AREA_HEIGHT_NORMAL/(n))
 #define MENU_BUTTON_BORDER            1
 #define KEYBOARD_BUTTON_BORDER        1
@@ -656,17 +656,12 @@ void tlv320aic3204_write_reg(uint8_t page, uint8_t reg, uint8_t data);
 #define KPF_Y_OFFSET             (LCD_HEIGHT - NUM_INPUT_HEIGHT - 4 * KPF_HEIGHT)  // text keypad Y offset
 #endif
 
-/*
- * Font size defines
- */
-#define FONT_SMALL           0
-#define FONT_NORMAL          1
-
 #if _USE_FONT_ == 0
 extern const uint8_t x5x7_bits[];
 #define FONT_START_CHAR   0x16
 #define FONT_WIDTH           5
 #define FONT_GET_HEIGHT      7
+#define FONT_STR_WIDTH(n)    ((n)*FONT_WIDTH)
 #define FONT_STR_HEIGHT      8
 #define FONT_GET_DATA(ch)    (  &x5x7_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT])
 #define FONT_GET_WIDTH(ch)   (8-(x5x7_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT]&0x7))
@@ -676,6 +671,7 @@ extern const uint8_t x6x10_bits[];
 #define FONT_START_CHAR   0x16
 #define FONT_WIDTH           6
 #define FONT_GET_HEIGHT     10
+#define FONT_STR_WIDTH(n)   ((n)*FONT_WIDTH)
 #define FONT_STR_HEIGHT     11
 #define FONT_GET_DATA(ch)   (  &x6x10_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT])
 #define FONT_GET_WIDTH(ch)  (8-(x6x10_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT]&0x7))
@@ -685,6 +681,7 @@ extern const uint8_t x7x11b_bits[];
 #define FONT_START_CHAR   0x16
 #define FONT_WIDTH           7
 #define FONT_GET_HEIGHT     11
+#define FONT_STR_WIDTH(n)   ((n)*FONT_WIDTH)
 #define FONT_STR_HEIGHT     11
 #define FONT_GET_DATA(ch)   (  &x7x11b_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT])
 #define FONT_GET_WIDTH(ch)  (8-(x7x11b_bits[(ch-FONT_START_CHAR)*FONT_GET_HEIGHT]&7))
@@ -694,6 +691,7 @@ extern const uint8_t x11x14_bits[];
 #define FONT_START_CHAR   0x16
 #define FONT_WIDTH          11
 #define FONT_GET_HEIGHT     14
+#define FONT_STR_WIDTH(n)   ((n)*FONT_WIDTH)
 #define FONT_STR_HEIGHT     16
 #define FONT_GET_DATA(ch)   (   &x11x14_bits[(ch-FONT_START_CHAR)*2*FONT_GET_HEIGHT  ])
 #define FONT_GET_WIDTH(ch)  (14-(x11x14_bits[(ch-FONT_START_CHAR)*2*FONT_GET_HEIGHT+1]&0x7))
@@ -704,6 +702,7 @@ extern const uint8_t x5x7_bits[];
 #define sFONT_START_CHAR   0x16
 #define sFONT_WIDTH           5
 #define sFONT_GET_HEIGHT      7
+#define sFONT_STR_WIDTH(n)    ((n)*sFONT_WIDTH)
 #define sFONT_STR_HEIGHT      8
 #define sFONT_GET_DATA(ch)    (  &x5x7_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT])
 #define sFONT_GET_WIDTH(ch)   (8-(x5x7_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT]&0x7))
@@ -713,6 +712,7 @@ extern const uint8_t x6x10_bits[];
 #define sFONT_START_CHAR   0x16
 #define sFONT_WIDTH           6
 #define sFONT_GET_HEIGHT     10
+#define sFONT_STR_WIDTH(n)   ((n)*sFONT_WIDTH)
 #define sFONT_STR_HEIGHT     11
 #define sFONT_GET_DATA(ch)   (  &x6x10_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT])
 #define sFONT_GET_WIDTH(ch)  (8-(x6x10_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT]&0x7))
@@ -722,6 +722,7 @@ extern const uint8_t x7x11b_bits[];
 #define sFONT_START_CHAR   0x16
 #define sFONT_WIDTH           7
 #define sFONT_GET_HEIGHT     11
+#define sFONT_STR_WIDTH(n)   ((n)*sFONT_WIDTH)
 #define sFONT_STR_HEIGHT     11
 #define sFONT_GET_DATA(ch)   (  &x7x11b_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT])
 #define sFONT_GET_WIDTH(ch)  (8-(x7x11b_bits[(ch-sFONT_START_CHAR)*sFONT_GET_HEIGHT]&7))
@@ -731,15 +732,18 @@ extern const uint8_t x11x14_bits[];
 #define sFONT_START_CHAR   0x16
 #define sFONT_WIDTH          11
 #define sFONT_GET_HEIGHT     14
+#define sFONT_STR_WIDTH(n)   ((n)*sFONT_WIDTH)
 #define sFONT_STR_HEIGHT     16
 #define sFONT_GET_DATA(ch)   (   &x11x14_bits[(ch-sFONT_START_CHAR)*2*sFONT_GET_HEIGHT  ])
 #define sFONT_GET_WIDTH(ch)  (14-(x11x14_bits[(ch-sFONT_START_CHAR)*2*sFONT_GET_HEIGHT+1]&0x7))
 #endif
 
 #if _USE_FONT_ != _USE_SMALL_FONT_
-void    lcd_set_font(int type);
+ // Font type defines
+ enum {FONT_SMALL = 0, FONT_NORMAL};
+ void    lcd_set_font(int type);
 #else
-#define lcd_set_font(type) {}
+ #define lcd_set_font(type) {}
 #endif
 
 extern const uint8_t numfont16x22[];
@@ -783,27 +787,30 @@ enum {
 #endif
 
 #ifdef __USE_GRID_VALUES__
-#define GRID_X_TEXT   (WIDTH - 5 * sFONT_WIDTH)
+#define GRID_X_TEXT   (WIDTH - sFONT_STR_WIDTH(5))
 #endif
 
 // Render control chars
-#define R_BGCOLOR  "\001"  // hex 0x01 set background color
-#define R_FGCOLOR  "\002"  // hex 0x02 set foreground color
+#define R_BGCOLOR  "\x01"  // hex 0x01 set background color
+#define R_FGCOLOR  "\x02"  // hex 0x02 set foreground color
+// Set BG / FG color string macros
+#define SET_BGCOLOR(idx)   R_BGCOLOR #idx
+#define SET_FGCOLOR(idx)   R_FGCOLOR #idx
 
-#define R_TEXT_COLOR "\002\001" // set  1 color index as foreground
-#define R_LINK_COLOR "\002\031" // set 25 color index as foreground
+#define R_TEXT_COLOR       SET_FGCOLOR(\x01)  // set  1 color index as foreground
+#define R_LINK_COLOR       SET_FGCOLOR(\x19)  // set 25 color index as foreground
 
 // Additional chars in fonts
-#define S_ENTER    "\026"  // hex 0x16
-#define S_DELTA    "\027"  // hex 0x17
-#define S_SARROW   "\030"  // hex 0x18
-#define S_INFINITY "\031"  // hex 0x19
-#define S_LARROW   "\032"  // hex 0x1A
-#define S_RARROW   "\033"  // hex 0x1B
-#define S_PI       "\034"  // hex 0x1C
-#define S_MICRO    '\035'  // hex 0x1D
-#define S_OHM      "\036"  // hex 0x1E
-#define S_DEGREE   "\037"  // hex 0x1F
+#define S_ENTER    "\x16"  // hex 0x16
+#define S_DELTA    "\x17"  // hex 0x17
+#define S_SARROW   "\x18"  // hex 0x18
+#define S_INFINITY "\x19"  // hex 0x19
+#define S_LARROW   "\x1A"  // hex 0x1A
+#define S_RARROW   "\x1B"  // hex 0x1B
+#define S_PI       "\x1C"  // hex 0x1C
+#define S_MICRO    "\x1D"  // hex 0x1D
+#define S_OHM      "\x1E"  // hex 0x1E
+#define S_DEGREE   "\x1F"  // hex 0x1F
 #define S_SIEMENS  "S"     //
 #define S_dB       "dB"    //
 #define S_Hz       "Hz"    //
@@ -824,8 +831,8 @@ enum trace_type {
   TRC_LOGMAG=0, TRC_PHASE, TRC_DELAY, TRC_SMITH, TRC_POLAR, TRC_LINEAR, TRC_SWR, TRC_REAL, TRC_IMAG,
   TRC_R, TRC_X, TRC_Z, TRC_ZPHASE,
   TRC_G, TRC_B, TRC_Y, TRC_Rp, TRC_Xp,
-  TRC_sC, TRC_sL,
-  TRC_pC, TRC_pL,
+  TRC_Cs, TRC_Ls,
+  TRC_Cp, TRC_Lp,
   TRC_Q,
   TRC_Rser, TRC_Xser, TRC_Zser,
   TRC_Rsh, TRC_Xsh, TRC_Zsh,
@@ -836,8 +843,8 @@ enum trace_type {
 #define RECTANGULAR_GRID_MASK ((1<<TRC_LOGMAG)|(1<<TRC_PHASE)|(1<<TRC_DELAY)|(1<<TRC_LINEAR)|(1<<TRC_SWR)|(1<<TRC_REAL)|(1<<TRC_IMAG)\
                               |(1<<TRC_R)|(1<<TRC_X)|(1<<TRC_Z)|(1<<TRC_ZPHASE)\
                               |(1<<TRC_G)|(1<<TRC_B)|(1<<TRC_Y)|(1<<TRC_Rp)|(1<<TRC_Xp)\
-                              |(1<<TRC_sC)|(1<<TRC_sL)\
-                              |(1<<TRC_pC)|(1<<TRC_pL)\
+                              |(1<<TRC_Cs)|(1<<TRC_Ls)\
+                              |(1<<TRC_Cp)|(1<<TRC_Lp)\
                               |(1<<TRC_Q)\
                               |(1<<TRC_Rser)|(1<<TRC_Xser)|(1<<TRC_Zser)\
                               |(1<<TRC_Rsh)|(1<<TRC_Xsh)|(1<<TRC_Zsh)\
@@ -846,7 +853,9 @@ enum trace_type {
 // complex graph type (polar / smith / admit)
 #define ROUND_GRID_MASK       ((1<<TRC_POLAR)|(1<<TRC_SMITH))
 // Scale / Amplitude input in nano/pico values graph type
-#define NANO_TYPE_MASK        ((1<<TRC_DELAY)|(1<<TRC_sC)|(1<<TRC_sL)|(1<<TRC_pC)|(1<<TRC_pL))
+#define NANO_TYPE_MASK        ((1<<TRC_DELAY)|(1<<TRC_Cs)|(1<<TRC_Ls)|(1<<TRC_Cp)|(1<<TRC_Lp))
+// Universal trace type for both channels
+#define S11_AND_S21_TYPE_MASK ((1<<TRC_LOGMAG)|(1<<TRC_PHASE)|(1<<TRC_DELAY)|(1<<TRC_LINEAR)|(1<<TRC_REAL)|(1<<TRC_IMAG)|(1<<TRC_POLAR)|(1<<TRC_SMITH))
 
 // Trace info description structure
 typedef float (*get_value_cb_t)(int idx, const float *v); // get value callback
@@ -968,7 +977,6 @@ enum {
 
 #define STORED_TRACES  1
 #define TRACES_MAX     4
-#define TRACE_INDEX_COUNT (TRACES_MAX+STORED_TRACES)
 
 typedef struct trace {
   uint8_t enabled;
@@ -1086,18 +1094,21 @@ const char *get_smith_format_names(int m);
 void marker_search(void);
 void marker_search_dir(int16_t from, int16_t dir);
 
-// _request flag for update screen
-#define REDRAW_PLOT       (1<<0)
-#define REDRAW_FREQUENCY  (1<<1)
-#define REDRAW_CAL_STATUS (1<<2)
-#define REDRAW_MARKER     (1<<3)
-#define REDRAW_REFERENCE  (1<<4)
-#define REDRAW_GRID_VALUE (1<<5)
-#define REDRAW_BATTERY    (1<<6)
-#define REDRAW_AREA       (1<<7)
-#define REDRAW_CLRSCR     (1<<8)
-#define REDRAW_BACKUP     (1<<9)
-#define REDRAW_CELLS      (1<<10)
+// Plot Redraw flags.
+#define REDRAW_PLOT       (1<< 0) // Update all trace indexes in plot area
+#define REDRAW_AREA       (1<< 1) // Redraw all plot area
+#define REDRAW_CELLS      (1<< 2) // Redraw only updated cells
+#define REDRAW_FREQUENCY  (1<< 3) // Redraw Start/Stop/Center/Span frequency, points count, Avg/IFBW
+#define REDRAW_CAL_STATUS (1<< 4) // Redraw calibration status (left screen part)
+#define REDRAW_MARKER     (1<< 5) // Redraw marker plates and text
+#define REDRAW_REFERENCE  (1<< 6) // Redraw reference
+#define REDRAW_GRID_VALUE (1<< 7) // Redraw grid values
+#define REDRAW_BATTERY    (1<< 8) // Redraw battery state
+#define REDRAW_CLRSCR     (1<< 9) // Clear all screen before redraw
+#define REDRAW_BACKUP     (1<<10) // Update backup information
+
+// Set this if need update all screen
+#define REDRAW_ALL   (REDRAW_CLRSCR | REDRAW_AREA | REDRAW_CAL_STATUS | REDRAW_BATTERY | REDRAW_FREQUENCY)
 
 /*
  * ili9341.c
@@ -1366,7 +1377,7 @@ extern uint16_t lastsaveid;
 #define DIGIT_SEPARATOR      '.'
 #endif
 
-static inline freq_t
+inline freq_t
 get_sweep_frequency(uint16_t type)
 {
   switch (type) {

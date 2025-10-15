@@ -129,7 +129,7 @@ float rtc_get_cal(void);
  * Backup
  */
 #ifdef __USE_BACKUP__
-static inline uint32_t get_backup_data32(uint16_t id) {
+inline uint32_t get_backup_data32(uint16_t id) {
   switch (id) {
     case 0: return RTC->BKP0R;
     case 1: return RTC->BKP1R;
@@ -139,7 +139,7 @@ static inline uint32_t get_backup_data32(uint16_t id) {
   }
   return 0;
 }
-static inline void set_backup_data32(uint16_t id, uint32_t data) {
+inline void set_backup_data32(uint16_t id, uint32_t data) {
   switch (id) {
     case 0: RTC->BKP0R = data; break;
     case 1: RTC->BKP1R = data; break;

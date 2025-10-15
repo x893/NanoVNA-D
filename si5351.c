@@ -25,9 +25,7 @@
 // audio codec frequency clock
 #define CLK2_FREQUENCY AUDIO_CLOCK_REF
 
-// Fixed PLL mode multiplier (used in band 1 for frequency 800-10k)
-#define PLL_N_1  8
-// Fixed PLL mode multiplier (used in band 2 for frequency 10k-100M)
+// Fixed PLL mode multiplier (used for AUDIO codec frequency generation)
 #define PLL_N_2 32
 
 // I2C address on bus (only 0x60 for Si5351A in 10-Pin MSOP)
@@ -98,14 +96,12 @@ void si5351_bulk_write(const uint8_t *buf, int len)
 }
 
 #if 0
-static bool si5351_bulk_read(uint8_t reg, uint8_t* buf, int len)
-{
-  i2cAcquireBus(&I2CD1);
-  msg_t mr = i2cMasterTransmitTimeout(&I2CD1, SI5351_I2C_ADDR, &reg, 1, buf, len, 1000);
-  i2cReleaseBus(&I2CD1);
-  return mr == MSG_OK;
+bool si5351_bulk_read(uint8_t reg, uint8_t* buf, int len) {
+  return i2c_receive(SI5351_I2C_ADDR, &reg, 1, buf, len);
 }
+#endif
 
+#if 0
 static void si5351_wait_pll_lock(void)
 {
   uint8_t status;
@@ -423,7 +419,6 @@ static const band_strategy_t *band_s;
 /*
  * Frequency generation divide on band
  */
-#define THRESHOLD 300000100U
 // Mode for H board v3.3 and SI5351 installed
 CONST_BAND band_strategy_t band_strategy_33H_SI5351[] = {
   {           0U,                0, { 0}, 0, 0,                            -1,                            -1, -1, -1,       1}, // 0
@@ -479,7 +474,7 @@ CONST_BAND band_strategy_t band_strategy_H4_SI5351[] = {
 // Mode for board v3.6 and MS5351 installed
 CONST_BAND band_strategy_t band_strategy_36H_MS5351[] = {
   {           0U,                0, { 0}, 0, 0,                            -1,                            -1, -1, -1,       1}, // 0
-  {       24000U, SI5351_FIXED_PLL, {16}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_2MA, SI5351_CLK_DRIVE_STRENGTH_2MA,  0,  0,       1}, // 1
+  {       26000U, SI5351_FIXED_PLL, {16}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_2MA, SI5351_CLK_DRIVE_STRENGTH_2MA,  0,  0,       1}, // 1
   {   120000000U, SI5351_FIXED_PLL, {32}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_2MA, SI5351_CLK_DRIVE_STRENGTH_2MA,  0,  0,       1}, // 2
   {            1, SI5351_FIXED_MULT,{ 4}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_4MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,       1}, // 3
   {   400000000U, SI5351_FIXED_MULT,{ 8}, 3, 5, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_6MA, 20, 20,       1}, // 4
@@ -491,12 +486,29 @@ CONST_BAND band_strategy_t band_strategy_36H_MS5351[] = {
   {           11, SI5351_FIXED_MULT,{ 4},11,13, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_8MA, 95, 95, 11*12*4}  // 10};
 };
 
+// Mode for board H v3.6+ or H4 v4.3+ and SWC5351 installed
+CONST_BAND band_strategy_t band_strategy_SWC5351[] = {
+  {           0U,                0, { 0}, 0, 0,                            -1,                            -1, -1, -1,       1}, // 0
+  {       32000U, SI5351_FIXED_PLL, { 6}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,       1}, // 1
+  {   130000000U, SI5351_FIXED_PLL, {40}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,       1}, // 2
+  {            1, SI5351_FIXED_MULT,{ 4}, 1, 1, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,       1}, // 3
+  {   588000000U, SI5351_FIXED_MULT,{ 6}, 3, 5, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,   3*5*4}, // 5
+  {            3, SI5351_FIXED_MULT,{ 4}, 3, 5, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_4MA,  0,  0,   3*5*4}, // 4
+  {            5, SI5351_FIXED_MULT,{ 4}, 5, 7, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_8MA,  0,  0,   5*7*4}, // 6
+  {            7, SI5351_FIXED_MULT,{ 4}, 7, 9, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_8MA, 40, 40,   7*9*4}, // 7
+  {            9, SI5351_FIXED_MULT,{ 4}, 9,11, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_8MA, 40, 40,  9*11*4}, // 8
+  {           11, SI5351_FIXED_MULT,{ 4},11,13, SI5351_CLK_DRIVE_STRENGTH_8MA, SI5351_CLK_DRIVE_STRENGTH_8MA, 40, 40, 11*12*4}  // 9
+};
+
 void si5351_set_band_mode(uint16_t t) {
+  static const band_strategy_t *bs[] = {
 #if defined(NANOVNA_F303)
-  band_s = t ? band_strategy_36H_MS5351 : band_strategy_H4_SI5351; // !!!! no test MS5351 on H4 board
+    band_strategy_H4_SI5351,  band_strategy_36H_MS5351, band_strategy_SWC5351
 #else
-  band_s = t ? band_strategy_36H_MS5351 : band_strategy_33H_SI5351;
+    band_strategy_33H_SI5351, band_strategy_36H_MS5351, band_strategy_SWC5351
 #endif
+  };
+  band_s = bs[t];
 }
 
 uint32_t
@@ -532,7 +544,7 @@ si5351_set_frequency(uint32_t freq, uint8_t drive_strength)
   uint32_t ofreq = freq + IF_OFFSET;
 
   // Select optimal band for prepared freq
-  if (freq <  26000U) {
+  if (freq < band_s[1].freq) {
      rdiv = SI5351_R_DIV(7);
      drive_strength = SI5351_CLK_DRIVE_STRENGTH_2MA; // Always use 2ma
      freq<<= 7;

@@ -125,7 +125,7 @@ static uint16_t p_sweep = 0;
 float measured[2][SWEEP_POINTS_MAX][2];
 
 #undef VERSION
-#define VERSION "1.2.40"
+#define VERSION "1.2.48"
 
 // Version text, displayed in Config->Version menu, also send by info command
 const char *info_about[]={
@@ -590,6 +590,7 @@ VNA_SHELL_FUNCTION(cmd_config) {
     "|lcshunt"   // Enable LC shunt measure option
     "|lcseries"  // Enable LC series  measure option
     "|xtal"      // Enable XTAL measure option
+    "|filter"    // Enable filter measure option
 #endif
 #ifdef __S11_CABLE_MEASURE__
     "|cable"     // Enable S11 cable measure option
@@ -990,9 +991,10 @@ static void load_settings(void) {
       lever_mode         = bk.leveler;
       config._vna_mode   = get_backup_data32(4) | (1<<VNA_MODE_BACKUP); // refresh backup settings
       set_bandwidth(bk.bw);
-    }
-  } else  // Try load 0 slot
-    caldata_recall(0);
+    } else
+      caldata_recall(0);   // Try load 0 slot
+  } else
+    caldata_recall(0);   // Try load 0 slot
   update_frequencies();
 #ifdef __VNA_MEASURE_MODULE__
   plot_set_measure_mode(current_props._measure);
@@ -1168,8 +1170,6 @@ static bool sweep(bool break_on_operation, uint16_t mask)
       (*sample_func)(&data[0]);             // calculate reflection coefficient
       if (mask & SWEEP_APPLY_CALIBRATION)   // Apply calibration
         apply_CH0_error_term(data, c_data);
-      if (mask & SWEEP_APPLY_EDELAY_S11) // Apply e-delay
-        applyEDelay(electrical_delayS11 * frequency, &data[0]);
     }
     // CH1:TRANSMISSION, reset and begin measure
     if (mask & SWEEP_CH1_MEASURE) {
@@ -1185,21 +1185,20 @@ static bool sweep(bool break_on_operation, uint16_t mask)
       (*sample_func)(&data[2]);              // Measure transmission coefficient
       if (mask & SWEEP_APPLY_CALIBRATION)    // Apply calibration
         apply_CH1_error_term(data, c_data);
-      if (mask & SWEEP_APPLY_EDELAY_S21)     // Apply e-delay
-        applyEDelay(electrical_delayS21 * frequency, &data[2]);
-      if (mask & SWEEP_APPLY_S21_OFFSET)
-        applyOffset(&data[2], offset);
     }
 #ifdef __VNA_Z_RENORMALIZATION__
     if (mask & SWEEP_USE_RENORMALIZATION)
       apply_renormalization(data, mask);
 #endif
     if (p_sweep < SWEEP_POINTS_MAX){
-      if (mask & SWEEP_CH0_MEASURE){
+      if (mask & SWEEP_CH0_MEASURE) {
+        if (mask & SWEEP_APPLY_EDELAY_S11) applyEDelay(electrical_delayS11 * frequency, &data[0]); // Apply e-delay
         measured[0][p_sweep][0] = data[0];
         measured[0][p_sweep][1] = data[1];
       }
-      if (mask & SWEEP_CH1_MEASURE){
+      if (mask & SWEEP_CH1_MEASURE) {
+        if (mask & SWEEP_APPLY_EDELAY_S21) applyEDelay(electrical_delayS21 * frequency, &data[2]); // Apply e-delay
+        if (mask & SWEEP_APPLY_S21_OFFSET) applyOffset(&data[2], offset);
         measured[1][p_sweep][0] = data[2];
         measured[1][p_sweep][1] = data[3];
       }
@@ -1829,7 +1828,7 @@ static void apply_CH1_error_term(float data[4], float c_data[CAL_TYPE_COUNT][2])
   data[2] = s21mr * c_data[ETERM_ET][0] - s21mi * c_data[ETERM_ET][1];
   data[3] = s21mi * c_data[ETERM_ET][0] + s21mr * c_data[ETERM_ET][1];
   if (cal_status & CALSTAT_ENHANCED_RESPONSE) {
-    // S21a = S21m * Et` * (1 - Es * S11a)
+    // S21a*= 1 - Es * S11a
     float esr = 1.0f - (c_data[ETERM_ES][0] * data[0] - c_data[ETERM_ES][1] * data[1]);
     float esi = 0.0f - (c_data[ETERM_ES][1] * data[0] + c_data[ETERM_ES][0] * data[1]);
     float re = data[2];
@@ -1964,7 +1963,7 @@ static void cal_interpolate(int idx, freq_t f, float data[CAL_TYPE_COUNT][2]){
     idx = src_points;
     goto copy_point;
   }
-  // Search k1
+  // Calculate k for linear interpolation
   freq_t span = cal_frequency1 - cal_frequency0;
   idx = (uint64_t)(f - cal_frequency0) * (uint64_t)src_points / span;
   uint64_t v = (uint64_t)span * idx + src_points/2;
@@ -1975,7 +1974,7 @@ static void cal_interpolate(int idx, freq_t f, float data[CAL_TYPE_COUNT][2]){
   // Not need interpolate
   if (f == src_f0) goto copy_point;
 
-  float k1 = (delta == 0) ? 0.0f : (float)(f - src_f0) / delta;
+  float k = (delta == 0) ? 0.0f : (float)(f - src_f0) / delta;
   // avoid glitch between freqs in different harmonics mode
   uint32_t hf0 = si5351_get_harmonic_lvl(src_f0);
   if (hf0 != si5351_get_harmonic_lvl(src_f1)) {
@@ -1983,20 +1982,19 @@ static void cal_interpolate(int idx, freq_t f, float data[CAL_TYPE_COUNT][2]){
     if (hf0 == si5351_get_harmonic_lvl(f)){
       if (idx < 1) goto copy_point; // point limit
       idx--;
-      k1+= 1.0f;
+      k+= 1.0f;
     }
     // f in next harmonic, need extrapolate from next 2 points
     else {
       if (idx >= src_points) goto copy_point; // point limit
       idx++;
-      k1-= 1.0f;
+      k-= 1.0f;
     }
   }
-  // Interpolate by k1
-  float k0 = 1.0f - k1;
+  // Interpolate by k
   for (eterm = 0; eterm < CAL_TYPE_COUNT; eterm++) {
-    data[eterm][0] = cal_data[eterm][idx][0] * k0 + cal_data[eterm][idx+1][0] * k1;
-    data[eterm][1] = cal_data[eterm][idx][1] * k0 + cal_data[eterm][idx+1][1] * k1;
+    data[eterm][0] = cal_data[eterm][idx][0] + k * (cal_data[eterm][idx+1][0] - cal_data[eterm][idx][0]);
+    data[eterm][1] = cal_data[eterm][idx][1] + k * (cal_data[eterm][idx+1][1] - cal_data[eterm][idx][1]);
   }
   return;
   // Direct point copy
@@ -2100,7 +2098,7 @@ void set_trace_type(int t, int type, int channel)
     set_trace_refpos(t, trace_info_list[type].refpos);
     // Set default trace scale
     set_trace_scale(t, trace_info_list[type].scale_unit);
-    request_to_redraw(REDRAW_AREA); // need for update grid
+    request_to_redraw(REDRAW_AREA | REDRAW_PLOT | REDRAW_BACKUP); // need for update grid
   }
   set_trace_channel(t, channel);
 }
@@ -2210,7 +2208,7 @@ VNA_SHELL_FUNCTION(cmd_trace)
 #endif
   // enum TRC_LOGMAG, TRC_PHASE, TRC_DELAY, TRC_SMITH, TRC_POLAR, TRC_LINEAR, TRC_SWR, TRC_REAL, TRC_IMAG, TRC_R, TRC_X, TRC_Z, TRC_ZPHASE,
   //      TRC_G, TRC_B, TRC_Y, TRC_Rp, TRC_Xp, TRC_sC, TRC_sL, TRC_pC, TRC_pL, TRC_Q, TRC_Rser, TRC_Xser, TRC_Zser, TRC_Rsh, TRC_Xsh, TRC_Zsh, TRC_Qs21
-  static const char cmd_type_list[] = "logmag|phase|delay|smith|polar|linear|swr|real|imag|r|x|z|zp|g|b|y|rp|xp|sc|sl|pc|pl|q|rser|xser|zser|rsh|xsh|zsh|q21";
+  static const char cmd_type_list[] = "logmag|phase|delay|smith|polar|linear|swr|real|imag|r|x|z|zp|g|b|y|rp|xp|cs|ls|cp|lp|q|rser|xser|zser|rsh|xsh|zsh|q21";
   int type = get_str_index(argv[1], cmd_type_list);
   if (type >= 0) {
     int src = trace[t].channel;
@@ -2334,7 +2332,7 @@ VNA_SHELL_FUNCTION(cmd_touchcal)
   shell_printf("done" VNA_SHELL_NEWLINE_STR \
                "touch cal params: %d %d %d %d" VNA_SHELL_NEWLINE_STR,
                config._touch_cal[0], config._touch_cal[1], config._touch_cal[2], config._touch_cal[3]);
-  request_to_redraw(REDRAW_CLRSCR | REDRAW_AREA | REDRAW_BATTERY | REDRAW_CAL_STATUS | REDRAW_FREQUENCY);
+  request_to_redraw(REDRAW_ALL);
 }
 
 VNA_SHELL_FUNCTION(cmd_touchtest)
@@ -2589,6 +2587,13 @@ VNA_SHELL_FUNCTION(cmd_si5351time)
 #ifdef ENABLE_SI5351_REG_WRITE
 VNA_SHELL_FUNCTION(cmd_si5351reg)
 {
+#if 0
+  (void) argc;
+  uint32_t reg = my_atoui(argv[0]);
+  uint8_t buf[1] = {0xAA};
+  if (si5351_bulk_read(reg, buf, 1))
+    shell_printf("si reg[%d] = 0x%02x" VNA_SHELL_NEWLINE_STR, reg, buf[0]);
+#else
   if (argc != 2) {
     shell_printf("usage: si reg data" VNA_SHELL_NEWLINE_STR);
     return;
@@ -2597,6 +2602,7 @@ VNA_SHELL_FUNCTION(cmd_si5351reg)
   uint8_t dat = my_atoui(argv[1]);
   uint8_t buf[] = { reg, dat };
   si5351_bulk_write(buf, 2);
+#endif
 }
 #endif
 
@@ -2642,7 +2648,7 @@ VNA_SHELL_FUNCTION(cmd_color)
   color = RGBHEX(my_atoui(argv[1]));
   config._lcd_palette[i] = color;
   // Redraw all
-  request_to_redraw(REDRAW_CLRSCR | REDRAW_AREA | REDRAW_CAL_STATUS | REDRAW_BATTERY | REDRAW_FREQUENCY);
+  request_to_redraw(REDRAW_ALL);
 }
 #endif
 
@@ -3450,8 +3456,7 @@ void hard_fault_handler_c(uint32_t *sp)
   uint32_t psr = sp[7];
   int y = 0;
   int x = 20;
-  lcd_set_background(LCD_BG_COLOR);
-  lcd_set_foreground(LCD_FG_COLOR);
+  lcd_set_colors(LCD_FG_COLOR, LCD_BG_COLOR);
   lcd_printf(x, y+=FONT_STR_HEIGHT, "SP  0x%08x",  (uint32_t)sp);
   lcd_printf(x, y+=FONT_STR_HEIGHT, "R0  0x%08x",  r0);
   lcd_printf(x, y+=FONT_STR_HEIGHT, "R1  0x%08x",  r1);

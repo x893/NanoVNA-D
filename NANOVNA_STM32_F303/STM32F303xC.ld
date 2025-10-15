@@ -1,4 +1,4 @@
-/*
+﻿/*
     ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,14 +68,14 @@ REGION_ALIAS("CALDATA_FLASH", flash7);
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts.*/
-REGION_ALIAS("MAIN_STACK_RAM", ram4);
+REGION_ALIAS("MAIN_STACK_RAM", ram0);
 
 /* RAM region to be used for the process stack. This is the stack used by
    the main() function.*/
-REGION_ALIAS("PROCESS_STACK_RAM", ram4);
+REGION_ALIAS("PROCESS_STACK_RAM", ram0);
 
 /* RAM region to be used for data segment.*/
-REGION_ALIAS("DATA_RAM", ram4);
+REGION_ALIAS("DATA_RAM", ram0);
 REGION_ALIAS("DATA_RAM_LMA", flash0);
 
 /* RAM region to be used for BSS segment.*/
